@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -13,26 +13,50 @@ generator client {
 // --------------------------------------
 
 model User {
-  id             Int       @default(autoincrement()) @id
+  id             Int       @id @default(autoincrement())
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   name           String?
   email          String    @unique
   hashedPassword String?
-  role           String    @default("user")
+  roles          String[]
   sessions       Session[]
 }
 
 model Session {
-  id                 Int       @default(autoincrement()) @id
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  expiresAt          DateTime?
-  handle             String    @unique
-  user               User?     @relation(fields: [userId], references: [id])
-  userId             Int?
-  hashedSessionToken String?
-  antiCSRFToken      String?
-  publicData         String?
-  privateData        String?
+  id                   Int       @id @default(autoincrement())
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  expiresAt            DateTime?
+  handle               String    @unique
+  userId               String?
+  hashedSessionToken   String?
+  antiCSRFToken        String?
+  publicData           String?
+  privateData          String?
+  user                 User?     @relation(fields: [userId_SessionToUser], references: [id])
+  userId_SessionToUser Int?
+}
+
+model Journal {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  day       Int
+  month     Int
+  year      Int
+  am        String?
+  pm        String?
+  published Boolean  @default(false)
+  tags      Tag[]
+}
+
+model Tag {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  name       String    @unique
+  lightColor String    @default("teal.800")
+  darkColor  String    @default("teal.200")
+  journals   Journal[]
 }

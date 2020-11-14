@@ -1,5 +1,7 @@
-import { useQuery, useSession } from "blitz"
-import getCurrentUser from "app/users/queries/getCurrentUser"
+import React from 'react'
+
+import { useQuery, useSession } from 'blitz'
+import getCurrentUser from 'app/users/queries/getCurrentUser'
 
 export const useCurrentUser = () => {
   // We wouldn't have to useSession() here, but doing so improves perf on initial

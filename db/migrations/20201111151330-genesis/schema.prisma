@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgres"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --------------------------------------
+
+model User {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  name           String?
+  email          String    @unique
+  hashedPassword String?
+  roles          String[]
+  sessions       Session[]
+}
+
+model Session {
+  id                   Int       @id @default(autoincrement())
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  expiresAt            DateTime?
+  handle               String    @unique
+  userId               String?
+  hashedSessionToken   String?
+  antiCSRFToken        String?
+  publicData           String?
+  privateData          String?
+  user                 User?     @relation(fields: [userId_SessionToUser], references: [id])
+  userId_SessionToUser Int?
+}
+
+model Journal {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  day       Int
+  month     Int
+  year      Int
+  am        String?
+  pm        String?
+  published Boolean  @default(false)
+  tags      Tag[]
+}
+
+model Tag {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  name       String    @unique
+  lightColor String    @default("teal.800")
+  darkColor  String    @default("teal.200")
+  journals   Journal[]
+}
